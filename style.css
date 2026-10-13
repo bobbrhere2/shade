@@ -1,6 +1,5 @@
-/* ============================================================
-   SHADE — СТИЛИ (ФИНАЛЬНАЯ ВЕРСИЯ)
-   ============================================================ */
+//*SHADE — CSS*/
+
 
    *,
    *::before,
@@ -48,12 +47,7 @@
        padding: 0;
        overflow: hidden;
    }
-   
-   /* ============================================================
-      КАСТОМНЫЙ СКРОЛЛБАР (для всей страницы)
-      ============================================================ */
-   
-   /* Для WebKit браузеров (Chrome, Safari, Edge) */
+   /* for Chrome, Safari, Edge */
    ::-webkit-scrollbar {
        width: 6px;
        height: 6px;
@@ -75,15 +69,12 @@
        background: var(--accent);
    }
    
-   /* Для Firefox */
+   /* for Firefox */
    * {
        scrollbar-width: thin;
        scrollbar-color: var(--bg-elevated) var(--bg-deep);
    }
    
-   /* ============================================================
-      ОСТАЛЬНЫЕ СТИЛИ (без изменений)
-      ============================================================ */
    
    .hidden {
        display: none !important;
@@ -569,7 +560,6 @@
        flex-shrink: 0;
    }
    
-   /* ── Закреплённые чаты ── */
    .pinned-chat {
        border-left: 3px solid var(--accent) !important;
    }
@@ -590,7 +580,6 @@
        font-weight: 600;
    }
    
-   /* ── Контекстное меню ── */
    .context-menu {
        position: fixed;
        background: var(--bg-panel);
@@ -700,7 +689,7 @@
        border-radius: 50%;
    }
    
-   /* ── Profile avatar (кликабельная) ── */
+   /* ── Profile avatar ── */
    #profile-avatar {
        cursor: pointer;
        transition: transform 0.2s, box-shadow 0.2s;
@@ -721,7 +710,7 @@
        border-bottom: 1px solid var(--border);
    }
    
-   /* ── Статус подключения (мини в углу) ── */
+   /* ── ping ── */
    .connection-status-mini {
        position: fixed;
        bottom: 12px;
@@ -952,7 +941,7 @@
        user-select: none;
    }
    
-   /* ── Хэш: раскрытие по клику ── */
+   /* ── Hash ── */
    .message-bubble.hashed {
        font-family: 'Courier New', monospace;
        letter-spacing: 0.5px;
@@ -1053,7 +1042,7 @@
        color: var(--text-muted);
    }
    
-   /* ── File Card (как в Telegram) ── */
+   /* ── File Card ── */
    .file-card {
        display: flex;
        align-items: center;
@@ -1373,7 +1362,6 @@
        transform: scale(1.2);
    }
    
-   /* ── Кастомный слайдер ── */
    .custom-slider-container {
        padding: 12px 0;
    }
@@ -1703,7 +1691,6 @@
        padding: 12px 20px;
    }
    
-   /* ── Модалка группы ── */
    .member-search-input {
        position: relative;
        margin-bottom: 12px;
