@@ -1,6 +1,3 @@
-// ============================================================
-//  SHADE — FIXED VERSION (РАБОТАЕТ С ТВОИМ СЕРВЕРОМ)
-// ============================================================
 
 const STORAGE_SESSION = 'shade_session';
 const STORAGE_PRIVATE_KEY = 'shade_private_key';
@@ -13,7 +10,7 @@ const AVATAR_COLORS = [
     '#f472b6', '#22d3ee', '#a78bfa', '#34d399'
 ];
 
-// ==================== КРИПТОГРАФИЯ ====================
+
 
 async function generateRSAKeys() {
     const keyPair = await crypto.subtle.generateKey(
@@ -82,7 +79,7 @@ async function decryptWithPrivateKey(encryptedBase64, privateKeyPem) {
     }
 }
 
-// ==================== СОСТОЯНИЕ ====================
+
 
 let currentUser = null;
 let chats = [];
@@ -101,7 +98,6 @@ let isSearchMode = false;
 let publicKeyCache = {};
 let isSending = false;
 
-// ==================== DOM ЭЛЕМЕНТЫ ====================
 
 const authScreen = document.getElementById('auth-screen');
 const app = document.getElementById('app');
@@ -150,7 +146,6 @@ const cancelGroupModal = document.getElementById('cancel-group-modal');
 let selectedGroupMembers = [];
 let groupSearchResults = [];
 
-// ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
 
 function formatDate(timestamp) {
     const date = new Date(timestamp);
@@ -305,7 +300,6 @@ function updatePageTitle() {
     document.title = totalUnread > 0 ? `(${totalUnread}) Shade` : 'Shade';
 }
 
-// ==================== УДАЛЕНИЕ ДУБЛИКАТОВ ====================
 
 function removeAllDuplicates() {
     chats.forEach(chat => {
@@ -320,7 +314,6 @@ function removeAllDuplicates() {
     });
 }
 
-// ==================== ЗАКРЕПЛЁННЫЕ ЧАТЫ ====================
 
 function togglePinChat(chatId) {
     const chat = chats.find(c => c.id === chatId);
@@ -335,7 +328,6 @@ function isChatPinned(chatId) {
     return chat ? chat.pinned === true : false;
 }
 
-// ==================== ХРАНИЛИЩЕ ====================
 
 function loadChatsFromStorage(username) {
     try {
@@ -361,7 +353,6 @@ function saveChatsToStorage() {
     localStorage.setItem(`shade_chats_${currentUser.username}`, JSON.stringify(chats));
 }
 
-// ==================== WEBSOCKET ====================
 
 function getWebSocketUrl() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -392,7 +383,6 @@ function connectWebSocket() {
         if (session && currentUser) {
             sendAuth(session, currentUser.passwordHash || '', currentUser.publicKey || '');
         }
-        // Сразу запрашиваем историю
         setTimeout(() => sendToServer({ type: 'get_history', data: {} }), 500);
     };
     ws.onmessage = function(event) {
@@ -453,7 +443,6 @@ function sendAuth(username, passwordHash, publicKey, nickname) {
     });
 }
 
-// ==================== ФИКС: ПЕРИОДИЧЕСКАЯ ПРОВЕРКА ИСТОРИИ ====================
 
 let lastHistoryCheck = 0;
 const HISTORY_CHECK_INTERVAL = 3000;
@@ -468,7 +457,6 @@ function forceCheckHistory() {
 
 setInterval(forceCheckHistory, HISTORY_CHECK_INTERVAL);
 
-// ==================== ОБРАБОТЧИК СЕРВЕРА ====================
 
 function handleServerMessage(data) {
     console.log('[WS] Получено:', data.type);
@@ -526,10 +514,9 @@ function handleServerMessage(data) {
     }
 }
 
-// ==================== ЗАГРУЗКА ИСТОРИИ ====================
 
 async function loadHistoryFromServer(messages) {
-    console.log(`📥 Загрузка ${messages.length} сообщений`);
+    console.log(`Загрузка ${messages.length} сообщений`);
     let newMessagesCount = 0;
     
     for (const msg of messages) {
@@ -576,7 +563,7 @@ async function loadHistoryFromServer(messages) {
     }
     
     if (newMessagesCount > 0) {
-        console.log(`📥 Добавлено ${newMessagesCount} новых сообщений`);
+        console.log(`Добавлено ${newMessagesCount} новых сообщений`);
         removeAllDuplicates();
         saveChatsToStorage();
         renderChatList(searchInput.value);
@@ -590,7 +577,6 @@ async function loadHistoryFromServer(messages) {
     }
 }
 
-// ==================== НОВЫЕ СООБЩЕНИЯ ====================
 
 async function handleNewMessage(msg) {
     const from = msg.from;
@@ -642,7 +628,6 @@ async function handleNewMessage(msg) {
     }
 }
 
-// ==================== ОНЛАЙН/ОФФЛАЙН ====================
 
 function handleUserOnline(username) {
     const chat = chats.find(c => c.id === username);
@@ -668,7 +653,6 @@ function handleUserOffline(username) {
     }
 }
 
-// ==================== ПОИСК ПОЛЬЗОВАТЕЛЕЙ ====================
 
 function searchUsers(query) {
     if (!query || query.length < 2) {
@@ -718,7 +702,6 @@ function renderSearchResults(results) {
     });
 }
 
-// ==================== ПУБЛИЧНЫЕ КЛЮЧИ ====================
 
 async function getPublicKey(username) {
     if (publicKeyCache[username]) return publicKeyCache[username];
@@ -739,7 +722,7 @@ async function getPublicKey(username) {
 }
 
 function createOrOpenChat(username, nickname, publicKey) {
-    if (username === currentUser?.username) { alert('❌ Нельзя написать самому себе!'); return; }
+    if (username === currentUser?.username) { alert('Нельзя написать самому себе!'); return; }
     let chat = chats.find(c => c.id === username);
     if (!chat) {
         chat = { id: username, name: nickname || username, online: false, unread: 0, lastTime: '—', messages: [] };
@@ -754,7 +737,6 @@ function createOrOpenChat(username, nickname, publicKey) {
     renderChatList('');
 }
 
-// ==================== ХЭШ - РАСКРЫТИЕ ПО КЛИКУ ====================
 
 function setupClickReveal(bubble, msgKey, realText) {
     if (!isHashEnabled() || revealedMessages.has(msgKey)) return;
@@ -814,7 +796,6 @@ function setupClickReveal(bubble, msgKey, realText) {
     });
 }
 
-// ==================== ОТКРЫТИЕ ЧАТА ====================
 
 function openChat(id) {
     const chat = chats.find((c) => c.id === id);
@@ -843,7 +824,6 @@ function updateHashHint() {
     }
 }
 
-// ==================== ОТРИСОВКА ====================
 
 function renderChatList(filter = '') {
     chatList.innerHTML = '';
@@ -862,7 +842,7 @@ function renderChatList(filter = '') {
     if (sortedPinned.length > 0 && !query) {
         const divider = document.createElement('div');
         divider.className = 'pinned-divider';
-        divider.textContent = '📌 Закреплённые';
+        divider.textContent = 'Закреплённые';
         chatList.appendChild(divider);
         sortedPinned.forEach(chat => renderChatItem(chat, true));
     }
@@ -925,7 +905,6 @@ function showContextMenu(e, chatId) {
     contextMenu.classList.remove('hidden');
 }
 
-// ==================== КОНТЕКСТНОЕ МЕНЮ ====================
 
 document.addEventListener('click', (e) => {
     if (contextMenu && !contextMenu.contains(e.target)) contextMenu.classList.add('hidden');
@@ -970,7 +949,6 @@ ctxDelete.addEventListener('click', () => {
     }
 });
 
-// ==================== ОТРИСОВКА СООБЩЕНИЙ ====================
 
 function renderMessages(chat) {
     messagesEl.innerHTML = '';
@@ -1045,8 +1023,6 @@ function renderMessages(chat) {
     messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-// ==================== ОТПРАВКА СООБЩЕНИЙ ====================
-
 messageForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if (isSending) return;
@@ -1095,15 +1071,13 @@ messageForm.addEventListener('submit', (e) => {
     })();
 });
 
-// ==================== ФАЙЛЫ (УПРОЩЁННЫЕ) ====================
-
 function sendFile(file, chatId) {
     const chat = chats.find(c => c.id === chatId);
     if (!chat) return;
     const now = new Date();
     const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
     const timestamp = Math.floor(now.getTime() / 1000);
-    const text = `📎 ${file.name} (${formatFileSize(file.size)})`;
+    const text = `${file.name} (${formatFileSize(file.size)})`;
     const msg = {
         id: Date.now() + Math.random(),
         text: text,
@@ -1134,7 +1108,7 @@ function sendFile(file, chatId) {
 }
 
 attachBtn.addEventListener('click', () => {
-    if (!activeChatId) { alert('❌ Сначала выберите чат'); return; }
+    if (!activeChatId) { alert('Сначала выберите чат'); return; }
     fileInput.click();
 });
 
@@ -1147,7 +1121,6 @@ fileInput.addEventListener('change', async (e) => {
     fileInput.value = '';
 });
 
-// ==================== АВАТАРКИ ====================
 
 document.getElementById('profile-avatar').addEventListener('click', () => {
     avatarInput.click();
@@ -1156,8 +1129,8 @@ document.getElementById('profile-avatar').addEventListener('click', () => {
 avatarInput.addEventListener('change', (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith('image/')) { alert('❌ Пожалуйста, выберите изображение'); return; }
-    if (file.size > 5 * 1024 * 1024) { alert('❌ Размер файла не должен превышать 5MB'); return; }
+    if (!file.type.startsWith('image/')) { alert('Пожалуйста, выберите изображение'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert('Размер файла не должен превышать 5MB'); return; }
     const reader = new FileReader();
     reader.onload = function(event) {
         const dataUrl = event.target.result;
@@ -1186,7 +1159,6 @@ avatarInput.addEventListener('change', (e) => {
     avatarInput.value = '';
 });
 
-// ==================== СОЗДАНИЕ ГРУППЫ ====================
 
 createGroupBtn.addEventListener('click', () => {
     groupNameInput.value = '';
@@ -1289,7 +1261,7 @@ document.getElementById('confirm-create-group').addEventListener('click', () => 
     chats.push(groupChat);
     saveChatsToStorage();
     selectedGroupMembers.forEach(member => {
-        const inviteText = `📨 Приглашение в группу "${name}" от ${currentUser.nickname || currentUser.username}`;
+        const inviteText = `Приглашение в группу "${name}" от ${currentUser.nickname || currentUser.username}`;
         let chat = chats.find(c => c.id === member.username);
         if (!chat) {
             chat = { id: member.username, name: member.username, online: false, unread: 0, lastTime: '—', messages: [] };
@@ -1310,7 +1282,7 @@ document.getElementById('confirm-create-group').addEventListener('click', () => 
         };
         chat.messages.push(msg);
         saveChatsToStorage();
-        // Отправляем как обычное сообщение
+        // here is a bug like just a messenge not like invite
         (async () => {
             let encryptedText = inviteText;
             let pubKey = await getPublicKey(member.username);
@@ -1337,7 +1309,6 @@ document.getElementById('confirm-create-group').addEventListener('click', () => 
     openChat(groupId);
 });
 
-// ==================== ПРОФИЛЬ ====================
 
 document.getElementById('open-profile').addEventListener('click', () => {
     if (!currentUser) return;
@@ -1409,7 +1380,6 @@ document.getElementById('confirm-delete').addEventListener('click', () => {
 });
 document.getElementById('setting-hash').addEventListener('change', () => { revealedMessages.clear(); });
 
-// ==================== АВТОРИЗАЦИЯ ====================
 
 authTabs.forEach((tab) => {
     tab.addEventListener('click', () => switchAuthTab(tab.dataset.tab));
@@ -1499,7 +1469,6 @@ document.querySelectorAll('.toggle-password').forEach((btn) => {
 
 logoutBtn.addEventListener('click', showAuth);
 
-// ==================== ПОИСК ====================
 
 searchInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
@@ -1512,7 +1481,6 @@ searchInput.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') { searchInput.value = ''; isSearchMode = false; renderChatList(''); searchInput.blur(); }
 });
 
-// ==================== ПОКАЗ/СКРЫТИЕ ЭКРАНОВ ====================
 
 function showApp() {
     authScreen.classList.add('hidden');
@@ -1542,7 +1510,6 @@ function showAuth() {
     chatList.innerHTML = '';
 }
 
-// ==================== ЗАПУСК ====================
 
 document.addEventListener('DOMContentLoaded', function() {
     connectWebSocket();
@@ -1565,7 +1532,4 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
-console.log('SHADE — Защищённый мессенджер');
-console.log('Закрепление чатов + контекстное меню');
-console.log('Хэш: нажми → откроется на 10 сек → закроется');
-console.log('Аватарка только для тебя (локально)');
+console.log('SHADE');
